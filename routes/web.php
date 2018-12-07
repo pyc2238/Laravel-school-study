@@ -21,4 +21,4 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('boards','BoardsController');
 Route::get('myArticles','BoardsController@myAriticles');
-Route::resource('attachments','AttachmentsController@store')->only(['store','destroy']);
+Route::resource('attachments','AttachmentsController')->only(['store','destroy']);

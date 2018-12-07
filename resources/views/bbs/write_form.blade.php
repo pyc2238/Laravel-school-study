@@ -42,13 +42,10 @@
             </div>
         </div>
     </form>
-    <form action="{{route('attachments.store')}}"
-        class="dropzone"
-        id="my-awesome-dropzone">
-
+    <form class="dropzone" action="{{route('attachments.store')}}" method="post" id="dropzone">
         @csrf
-
-    </form>
+        
+      </form>
 </div>
 
 <div style="margin:10px 0 50px 0">
@@ -58,4 +55,40 @@
     <a class="btn btn-danger offset-md-1" href="{{route('boards.index',['page'=>1])}}">목록보기</a>
 </div>
 
+<script type="text/javascript">
+    Dropzone.options.dropzone = {
+        addRemoveLinks: true,
+        removedfile: function(file) {
+                var name = file.upload.filename;
+                var fileid = file.upload.id;
+                $.ajax({
+                    headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                    type: 'DELETE',
+                    url: '/attachments/'+fileid,
+                    data: {filename: name},
+                    success: function (data){
+                        //console.log("File has been successfully removed!!");
+                        alert(data + 'has been successfully removed!!');
+                    },
+                    error: function(e) {
+                        //console.log(e);
+                        alert(e);
+                    }});
+                    var fileRef;
+                    return (fileRef = file.previewElement) != null ? 
+                    fileRef.parentNode.removeChild(file.previewElement) : void 0;
+        },    
+        success: function(file, response) {
+            alert(response.filename);
+            file.upload.id = response.id;
+            $("<input>", {type:'hidden', name:'attachments[]', value:response.id}).appendTo($('#store'));
+        },
+        error: function(file, response){
+           return false;
+        }
+    }
+  </script>
+  
 @endsection
